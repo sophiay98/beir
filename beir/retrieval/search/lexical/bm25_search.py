@@ -17,6 +17,7 @@ class BM25Search(BaseSearch):
     def __init__(
         self,
         index_name: str,
+        api_key: str,
         hostname: str = "localhost",
         keys: dict[str, str] = {"title": "title", "body": "txt"},
         language: str = "english",
@@ -34,6 +35,7 @@ class BM25Search(BaseSearch):
         self.sleep_for = sleep_for
         self.config = {
             "hostname": hostname,
+            "api_key": api_key,
             "index_name": index_name,
             "keys": keys,
             "timeout": timeout,

@@ -64,9 +64,10 @@ class ElasticSearch:
 
         self.es = Elasticsearch(
             [es_credentials["hostname"]],
+            api_key=es_credentials["api_key"],
             timeout=es_credentials["timeout"],
             retry_on_timeout=es_credentials["retry_on_timeout"],
-            maxsize=es_credentials["maxsize"],
+            maxsize=es_credentials["maxsize"]
         )
 
     def check_language_supported(self):
