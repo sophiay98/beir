@@ -10,7 +10,7 @@ tracer.setLevel(logging.CRITICAL)  # supressing INFO messages for elastic-search
 
 
 class ElasticSearch:
-    def __init__(self, es_credentials: dict[str, object]):
+    def __init__(self, es_credentials: dict[str, object], index_config: dict[str, object] = None):
         logging.info("Activating Elasticsearch....")
         logging.info("Elastic Search Credentials: %s", es_credentials)
         self.index_name = es_credentials["index_name"]
@@ -70,6 +70,8 @@ class ElasticSearch:
             maxsize=es_credentials["maxsize"]
         )
 
+        self.index_config = index_config
+
     def check_language_supported(self):
         """Check Language Supported in Elasticsearch"""
         if self.language.lower() not in self.languages:
@@ -122,7 +124,11 @@ class ElasticSearch:
                         }
                     },
                 }
-
+            config_settings = self.index_config.get('settings', {}) if self.index_config else {}
+            if 'similarity' in config_settings.get('index', {}) or 'analyzer' in config_settings.get('analysis', {}):
+                if 'settings' not in mapping:
+                    mapping['settings'] = {}
+                mapping['settings'].update(self.index_config['settings'])
             self.es.indices.create(
                 index=self.index_name, body=mapping, ignore=[400]
             )  # 400: IndexAlreadyExistsException
